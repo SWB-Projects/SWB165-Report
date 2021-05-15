@@ -1,0 +1,13 @@
+# data processing
+numpy
+pandas
+scikit-learn
+xlrd
+
+# modeling 
+scikit-criteria
+
+# plot
+matplotlib
+seaborn
+
