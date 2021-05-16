@@ -1,0 +1,14 @@
+# data processing 
+pandas
+xlrd == 2.0.1
+scikit_learn==0.24.2
+
+# modeling 
+scikit_criteria==0.2.10
+
+# app
+streamlit==0.56.0
+
+
+
+
