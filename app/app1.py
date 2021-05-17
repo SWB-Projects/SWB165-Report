@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 # author: DJ
-
 # app1.py
 # basic packages
 import os, glob, datetime, base64
@@ -42,8 +41,9 @@ def get_table_download_link(df):
     b64 = base64.b64encode(val)  # val looks like b'...'
     return f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="Ranking_Results.xlsx">Download excel file</a>' # decode b'abc' => abc
 
+
 def f1():
-    st.title("Ranking Algorithm")
+    st.title("Fast Ranking")
     st.markdown("<description> Rapid ranking based on indicator data </description>",
                 unsafe_allow_html = True)
     st.sidebar.title("")
@@ -59,6 +59,8 @@ def f1():
         inputData = pd.read_excel(data_file, engine = "openpyxl") 
         # show the head of data
         is_show_data = st.checkbox("Show content of your file?")
+        st.markdown("The top 5 rows of your uploaded data",
+                        unsafe_allow_html = True)
         if is_show_data:
             st.write(inputData.head())
         #--------------------------------------------------#
@@ -68,7 +70,7 @@ def f1():
                     unsafe_allow_html = True)   
         st.markdown("## 2. Settings",
                 unsafe_allow_html = True)
-        numerics = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
+        numerics = ["int16", "int32", "int64", "float16", "float32", "float64"]
         numDF = inputData.select_dtypes(include = numerics)
         numCols = numDF.columns.tolist()
 
@@ -88,7 +90,7 @@ def f1():
                 unsafe_allow_html = True) 
         stNeg = st.multiselect("Negative Indicator Columns", unselectedCols)
         #--------------------------------------------------#
-        # collect user provided information
+        # collect information provided by user
         #--------------------------------------------------#
         criteria =[]
         selectedCols = []
@@ -110,9 +112,10 @@ def f1():
         st.markdown("## ",
                     unsafe_allow_html = True)   
         if len(selectedCols) > 0:
-            st.markdown("## 3. Run Ranking Algorithm",
-                    unsafe_allow_html = True)   
-            if st.button('Run'):
+            st.markdown("## 3. Run Ranking Algorithm",unsafe_allow_html = True)   
+            st.markdown("## ",unsafe_allow_html = True)
+            sortData = st.radio("Sort results by ranks?",("Yes", "No"))
+            if st.button("Run"):
                 # X   
                 X = inputData[selectedCols]
 
@@ -129,7 +132,6 @@ def f1():
                 # prepare input data for ranking
                 criteria_data = Data(X_scaled, 
                         criteria,
-                        #anames=y,
                         cnames = X_scaled.columns)
                 #------------------------------------#        
                 # ranking algorithm: WeightedProduct  
@@ -145,15 +147,29 @@ def f1():
                 X.loc[:, "Rank_using_selected_columns"] = dec_dp.rank_
 
                 # add id cols back 
-                outputData = pd.concat([inputData[idCols].reset_index(drop=True), X], axis =1)      
-                # sort if needed
-                #outputData =outputData.sort_values(by ="Rank_using_selected_columns")              
+                outputData = pd.concat([inputData[idCols].reset_index(drop=True), X], axis =1)     
+                  
+
+                # ask users whether sorting is needed
+                
+                if sortData == "Yes":
+                    st.write("Results are sorted by ranks")
+                    saveData =outputData.sort_values(by ="Rank_using_selected_columns")    
+                else:
+                    saveData = outputData
+                    
                 #--------------------------------------------------#
                 # Download results
                 #--------------------------------------------------#
                 st.markdown("## ",
-                        unsafe_allow_html = True)   
+                        unsafe_allow_html = True)  
+
+                 
+            
                 st.markdown("## 4. Download Results",
-                        unsafe_allow_html = True)      
-                st.markdown(get_table_download_link(outputData), 
+                        unsafe_allow_html = True)   
+                st.markdown("The top 5 rows of results",
+                        unsafe_allow_html = True)       
+                st.write(saveData.head())   
+                st.markdown(get_table_download_link(saveData), 
                             unsafe_allow_html=True)
