@@ -1,6 +1,7 @@
 # data processing 
 pandas
 xlrd == 2.0.1
+openpyxl
 scikit_learn==0.24.2
 
 # modeling 
