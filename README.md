@@ -5,7 +5,7 @@
 https://fastranking.herokuapp.com
 ### Overview
 
-![input](assets/input.png)
+![input](assets/Input.png)
 
 
 ![output](assets/output.png)
